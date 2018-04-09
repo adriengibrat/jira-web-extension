@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "version": "0.0.1",
+  "name": "Jira web extension",
+  "short_name": "jira_info",
+  "description": "Display information about Jira task & links",
+  "icons": {
+    "128": "images/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["scripts/tippy.js", "scripts/jira-issue.js"]
+    }
+  ],
+  "permissions": ["storage"],
+  "options_ui": {
+    "page": "options.html"
+  }
+}
