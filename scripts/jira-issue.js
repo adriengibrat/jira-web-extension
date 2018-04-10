@@ -70,7 +70,6 @@
 	}
 
 	chrome.storage.sync.get(['url', 'jira'], ({ url, jira }) => {
-		console.log(url, jira, !jira && !location.href.indexOf(url) === 0)
 		if (!jira && location.href.indexOf(url) === 0) return // disable on jira pages
 		// Wrap loaded task ids occurences
 		wrap(document)
