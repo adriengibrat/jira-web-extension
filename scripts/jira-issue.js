@@ -6,12 +6,16 @@
 })(this, tippy => {
 	const pattern = /\b[A-Z]{2,80}-\d+\b/g
 	const skip = node => !node || ['script', 'style', 'jira'].includes(node.localName)
-	const empty = document.createElement('div')
+	const escape = str => {
+		const div = document.createElement('div')
+		div.appendChild(document.createTextNode(str == null ? '' : str))
+		return div.innerHTML
+	}
 	const pop = node => {
 		const tip = tippy(node, {
 			maxWidth: '320px',
 			delay: [200, 150],
-			html: empty,
+			html: document.createElement('div'),
 			performance: true,
 			interactive: true,
 			wait(show) {
@@ -36,9 +40,9 @@
 							return response.json()
 						})
 						.then(({ key, fields: { project, issuetype, priority, status, summary, description, labels, versions, fixVersions, assignee, progress } }) => {
-							const version_link = version => `<a style="color:inherit" href="${url}/projects/${project.key}/versions/${version.id}" title="${version.releaseDate || ''}">${version.name}</a>`
-							const avatar = user => user ? `<img src="${user.avatarUrls['16x16']}" title="${user.displayName}" height="16" align="absmiddle">` :' '
-							const icon = data => data ? `<img src="${data.iconUrl}" title="${data.name}" height="16" align="absmiddle"/>` : ''
+							const version_link = version => `<a style="color:inherit" href="${url}/projects/${project.key}/versions/${version.id}" title="${escape(version.releaseDate)}">${version.name}</a>`
+							const avatar = user => user ? `<img src="${user.avatarUrls['16x16']}" title="${escape(user.displayName)}" height="16" align="absmiddle">` :' '
+							const icon = data => data ? `<img src="${data.iconUrl}" title="${escape(data.name)}" height="16" align="absmiddle"/>` : ''
 							const versions_info = versions && versions.length  ? `<span title="Affected versions"><b>🗔</b> ${versions.map(version_link)}</span>` : ''
 							const fixVersions_info = fixVersions && fixVersions.length ? `<span title="Target versions"><b>🞋</b> ${fixVersions.map(version_link)}</span>` : ''
 							const labels_info = labels && labels.length ? `<span title="Labels"><b>🏷</b> ${labels.join(' ')}</span>` : ''
@@ -47,7 +51,7 @@
 								${icon(issuetype)}
 								${icon(priority)}
 								${assignee ? avatar(assignee) : ''}
-								<a style="color:inherit" href="${url}/browse/${key}" title="${description}">${summary}</a>
+								<a style="color:inherit" href="${url}/browse/${key}" title="${escape(description)}">${summary}</a>
 								${icon(status)}
 								<p>${versions_info} ${fixVersions_info} ${labels_info}</p>
 								${progress_info(progress)}
